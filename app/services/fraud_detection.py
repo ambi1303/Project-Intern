@@ -3,6 +3,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models.models import Transaction, TransactionStatus, TransactionType, CurrencyType
 from app.core.config import settings
+from app.db.session import SessionLocal
+import logging
+
+logger = logging.getLogger(__name__)
 
 class FraudDetectionService:
     def __init__(self, db: Session):
@@ -85,4 +89,64 @@ class FraudDetectionService:
             "total_flagged_transactions": total_flagged,
             "total_flagged_amount": total_amount_flagged,
             "last_scan": datetime.utcnow()
-        } 
+        }
+
+def scan_for_fraud():
+    """Scan for potentially fraudulent transactions"""
+    db = SessionLocal()
+    try:
+        # Get transactions from the last 24 hours
+        yesterday = datetime.utcnow() - timedelta(days=1)
+        
+        # Check for large transactions
+        large_transactions = db.query(Transaction).filter(
+            Transaction.created_at >= yesterday,
+            Transaction.amount > 10000,  # Threshold for large transactions
+            Transaction.is_flagged == False
+        ).all()
+        
+        # Check for rapid transactions
+        rapid_transactions = db.query(Transaction).filter(
+            Transaction.created_at >= yesterday,
+            Transaction.is_flagged == False
+        ).group_by(Transaction.user_id).having(
+            func.count(Transaction.id) > 10  # More than 10 transactions in 24 hours
+        ).all()
+        
+        # Flag suspicious transactions
+        for transaction in large_transactions + rapid_transactions:
+            transaction.is_flagged = True
+            transaction.flag_reason = "Automated fraud detection"
+            logger.info(f"Flagged transaction {transaction.id} for fraud detection")
+        
+        db.commit()
+        logger.info("Fraud detection scan completed successfully")
+        
+    except Exception as e:
+        logger.error(f"Error in fraud detection scan: {e}")
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+def check_transaction_fraud(transaction: Transaction, db: SessionLocal) -> bool:
+    """Check if a single transaction is potentially fraudulent"""
+    try:
+        # Check for large amount
+        if transaction.amount > 10000:
+            return True
+            
+        # Check for rapid transactions
+        recent_transactions = db.query(Transaction).filter(
+            Transaction.user_id == transaction.user_id,
+            Transaction.created_at >= datetime.utcnow() - timedelta(hours=1)
+        ).count()
+        
+        if recent_transactions > 5:  # More than 5 transactions in an hour
+            return True
+            
+        return False
+        
+    except Exception as e:
+        logger.error(f"Error checking transaction fraud: {e}")
+        return False 

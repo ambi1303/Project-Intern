@@ -1,45 +1,22 @@
 # Digital Wallet System
 
-A secure and feature-rich digital wallet system built with FastAPI, implementing cash management and fraud detection capabilities.
+A secure and feature-rich digital wallet system built with FastAPI, supporting multiple currencies and advanced security features.
 
 ## Features
 
-- User Authentication & Session Management
-  - Secure user registration and login
-  - JWT token-based authentication
-  - Protected endpoints with authentication middleware
+- Multi-currency support (USD, EUR, GBP, JPY, INR, BONUS)
+- Secure user authentication with JWT tokens
+- Transaction management with fraud detection
+- Admin dashboard for system monitoring
+- Email notifications for transactions
+- Soft delete functionality for data retention
+- Daily fraud detection scanning
 
-- Wallet Operations
-  - Deposit and withdraw virtual cash
-  - Transfer funds between users
-  - Transaction history tracking
-  - Multi-currency support
+## Prerequisites
 
-- Transaction Processing & Validation
-  - Atomic transaction processing
-  - Balance validation
-  - Transaction status tracking
-
-- Fraud Detection
-  - Rule-based fraud detection
-  - Suspicious pattern monitoring
-  - Daily automated fraud scans
-  - Transaction flagging system
-
-- Admin & Reporting
-  - System statistics
-  - Top users by balance
-  - Transaction volume tracking
-  - Flagged transaction monitoring
-
-## Tech Stack
-
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- JWT Authentication
-- APScheduler
-- SQLite (can be easily switched to PostgreSQL)
+- Python 3.8+
+- PostgreSQL
+- Redis (for background tasks)
 
 ## Installation
 
@@ -49,7 +26,7 @@ git clone <repository-url>
 cd digital-wallet
 ```
 
-2. Create a virtual environment:
+2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -60,55 +37,92 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run the application:
+4. Set up environment variables:
 ```bash
-uvicorn app.main:app --reload
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-## API Documentation
+5. Initialize the database:
+```bash
+python init_db.py
+```
 
-Once the application is running, you can access the API documentation at:
-- Swagger UI: http://localhost:8000/api/v1/docs
-- ReDoc: http://localhost:8000/api/v1/redoc
+## Running the Application
+
+Start the application:
+```bash
+python run.py
+```
+
+The API will be available at `http://localhost:8000`
+
+API Documentation: `http://localhost:8000/docs`
 
 ## API Endpoints
 
 ### Authentication
-- POST `/api/v1/register` - Register a new user
-- POST `/api/v1/login` - Login and get access token
+- POST `/api/v1/auth/register` - Register new user
+- POST `/api/v1/auth/login` - Login and get access token
 
 ### Wallet
-- GET `/api/v1/wallet` - Get wallet details
-- POST `/api/v1/transactions` - Create a new transaction
-- GET `/api/v1/transactions` - Get transaction history
+- GET `/api/v1/wallet` - Get user's wallet
+- GET `/api/v1/wallet/transactions` - Get transaction history
+
+### Transactions
+- POST `/api/v1/transactions` - Create new transaction
+- GET `/api/v1/transactions` - List user's transactions
 
 ### Admin
 - GET `/api/v1/admin/stats` - Get system statistics
-- GET `/api/v1/admin/top-users` - Get top users by balance
+- GET `/api/v1/admin/top-users` - Get top users
+- GET `/api/v1/admin/flagged-transactions` - Get flagged transactions
+- POST `/api/v1/admin/transactions/{transaction_id}/review` - Review flagged transaction
 
 ## Security Features
 
-- Password hashing using bcrypt
-- JWT token-based authentication
+- Password hashing with bcrypt
+- JWT token authentication
 - Rate limiting
+- Fraud detection system
 - Input validation
-- Fraud detection rules:
-  - Large transaction monitoring
-  - Rapid transaction detection
-  - Unusual pattern detection
+- SQL injection prevention
+- XSS protection
+
+## Database Schema
+
+The system uses PostgreSQL with the following main tables:
+- users
+- wallets
+- transactions
+- admin_users
+
+## Background Jobs
+
+- Daily fraud detection scanning
+- Email notification sending
+- Transaction status updates
 
 ## Development
+
+### Code Structure
+```
+app/
+├── api/
+│   └── api_v1/
+│       └── endpoints/
+├── core/
+├── db/
+├── models/
+├── schemas/
+├── services/
+└── utils/
+```
 
 ### Running Tests
 ```bash
 pytest
 ```
-
-### Database Migrations
-The project uses SQLite by default. To switch to PostgreSQL:
-1. Update the DATABASE_URL in `app/core/config.py`
-2. Create a new database
-3. Run migrations
 
 ## Contributing
 

@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from app.models.models import TransactionType, TransactionStatus, CurrencyType
@@ -11,12 +11,15 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(UserBase):
+    password: Optional[str] = None
+
 class UserInDB(UserBase):
     id: int
     is_active: bool
     is_admin: bool
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     is_deleted: bool
     deleted_at: Optional[datetime] = None
 
@@ -28,50 +31,79 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-class TokenPayload(BaseModel):
-    sub: Optional[str] = None
+class TokenData(BaseModel):
+    email: Optional[str] = None
 
 # Wallet schemas
 class WalletBase(BaseModel):
-    balances: Dict[str, float]
+    balances: Dict[str, float] = {
+        "USD": 0.0,
+        "EUR": 0.0,
+        "GBP": 0.0,
+        "JPY": 0.0,
+        "INR": 0.0,
+        "BONUS": 0.0
+    }
+
+class WalletCreate(WalletBase):
+    user_id: int
+
+class WalletUpdate(WalletBase):
+    pass
 
 class WalletInDB(WalletBase):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: datetime
-    is_deleted: bool
+    updated_at: Optional[datetime] = None
+    is_deleted: bool = False
     deleted_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat() if v else None
+        }
 
 # Transaction schemas
 class TransactionBase(BaseModel):
     amount: float
-    currency: CurrencyType = CurrencyType.USD
-    transaction_type: TransactionType
+    currency: CurrencyType
+    type: TransactionType
     description: Optional[str] = None
-    receiver_email: Optional[EmailStr] = None
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
 
 class TransactionCreate(TransactionBase):
-    pass
+    receiver_email: Optional[str] = None  # Only required for TRANSFER type
+
+class TransactionUpdate(BaseModel):
+    status: Optional[TransactionStatus] = None
+    is_flagged: Optional[bool] = None
+    flag_reason: Optional[str] = None
 
 class TransactionInDB(TransactionBase):
     id: int
-    wallet_id: int
-    sender_id: Optional[int]
-    receiver_id: Optional[int]
+    sender_id: int
+    receiver_id: int
+    sender_wallet_id: int
+    receiver_wallet_id: int
     status: TransactionStatus
-    created_at: datetime
-    updated_at: datetime
-    is_deleted: bool
-    deleted_at: Optional[datetime] = None
-    is_flagged: bool
+    is_flagged: bool = False
     flag_reason: Optional[str] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    is_deleted: bool = False
+    deleted_at: Optional[datetime] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
 
 # Admin schemas
 class AdminStats(BaseModel):

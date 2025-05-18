@@ -3,8 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.core.security import create_access_token, verify_password, get_password_hash
 from app.db.session import get_db
-from app.models.models import User
+from app.models.models import User, Wallet
 from app.schemas.schemas import UserCreate, UserInDB, Token
+from app.api.deps import get_current_active_user
 
 router = APIRouter()
 
@@ -27,6 +28,21 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    
+    wallet = Wallet(
+        user_id=db_user.id,
+        balances={
+            "USD": 0.0,
+            "EUR": 0.0,
+            "GBP": 0.0,
+            "JPY": 0.0,
+            "INR": 0.0,
+            "BONUS": 0.0
+        }
+    )
+    db.add(wallet)
+    db.commit()
+    
     return db_user
 
 @router.post("/login", response_model=Token)

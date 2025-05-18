@@ -3,11 +3,18 @@ from pydantic import AnyHttpUrl, EmailStr, validator
 from pydantic_settings import BaseSettings
 import secrets
 from pathlib import Path
+import os
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Digital Wallet API"
+    PROJECT_NAME: str = "Digital Wallet System"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
+    DESCRIPTION: str = "A secure digital wallet system with multi-currency support"
+    
+    # Server Settings
+    HOST: str = "127.0.0.1"
+    PORT: int = 8000
+    DEBUG: bool = True
     
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -25,7 +32,8 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     # Database
-    DATABASE_URL: str = "sqlite:///./digital_wallet.db"
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
+    DATABASE_URL: str = f"sqlite:///{BASE_DIR}/app.db"
     
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = 60
@@ -40,11 +48,19 @@ class Settings(BaseSettings):
     SMTP_HOST: Optional[str] = None
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
-    EMAILS_FROM_EMAIL: Optional[EmailStr] = None
+    EMAILS_FROM_EMAIL: Optional[str] = None
     EMAILS_FROM_NAME: Optional[str] = None
     
     # Environment
     ENVIRONMENT: str = "development"  # development or production
+    
+    # Admin Settings
+    FIRST_ADMIN_EMAIL: str = "admin@example.com"
+    FIRST_ADMIN_PASSWORD: str = "admin123"
+    
+    # Redis Settings
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
     
     class Config:
         case_sensitive = True

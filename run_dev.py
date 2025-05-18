@@ -9,7 +9,6 @@ def check_db_connection():
     """Check database connection and create tables if they don't exist"""
     db = SessionLocal()
     try:
-        # This will create tables if they don't exist
         db.execute(text("SELECT 1"))
         print("Database connection successful")
     except Exception as e:
@@ -26,13 +25,13 @@ if __name__ == "__main__":
     scheduler.start()
     print("Scheduler started")
     
-    # Run the application with optimized settings
+    # Run the application with development settings
     uvicorn.run(
         "app.main:app",
         host=settings.HOST,
         port=settings.PORT,
-        reload=False,  # Disable auto-reload in production
-        workers=1,     # Single worker for development
-        log_level="info",
-        access_log=False  # Disable access logs for better performance
+        reload=True,    # Enable auto-reload for development
+        reload_dirs=["app"],  # Only watch the app directory
+        workers=1,
+        log_level="info"
     ) 
