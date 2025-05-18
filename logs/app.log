@@ -39,3 +39,20 @@
 2025-05-19 03:17:06,706 - digital_wallet - INFO - Application startup completed successfully
 2025-05-19 03:17:06,706 - apscheduler.scheduler - INFO - Scheduler has been shut down
 2025-05-19 03:17:08,475 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2025-05-19 03:17:09,136 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:09,136 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:17:09,136 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:10,286 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:10,286 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:17:10,286 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:15,286 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:15,286 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:17:15,286 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:15,286 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:17:15,286 - digital_wallet - INFO - Application startup completed successfully
+2025-05-19 03:17:16,535 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:16,535 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:17:16,536 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:16,536 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:17:16,536 - digital_wallet - INFO - Application startup completed successfully
+2025-05-19 03:18:40,068 - apscheduler.scheduler - INFO - Scheduler has been shut down
