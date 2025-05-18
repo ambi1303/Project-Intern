@@ -1,0 +1,41 @@
+2025-05-19 03:12:24,006 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:24,006 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:12:24,006 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:30,499 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:30,499 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:12:30,499 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:30,499 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:12:33,496 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:33,496 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:12:33,496 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:39,096 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2025-05-19 03:12:39,621 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:39,621 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:12:39,621 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:39,621 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:12:49,566 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:49,566 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:12:49,566 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:55,741 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:12:55,741 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:12:55,742 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:12:55,742 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:14:18,754 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2025-05-19 03:14:20,954 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:14:20,954 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:14:20,954 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:14:27,112 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:14:27,112 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:14:27,112 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:14:27,115 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:16:56,690 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2025-05-19 03:17:00,578 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:00,578 - apscheduler.scheduler - INFO - Added job "run_fraud_detection" to job store "default"
+2025-05-19 03:17:00,578 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:06,706 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-19 03:17:06,706 - apscheduler.scheduler - INFO - Added job "Daily fraud scan" to job store "default"
+2025-05-19 03:17:06,706 - apscheduler.scheduler - INFO - Scheduler started
+2025-05-19 03:17:06,706 - digital_wallet - INFO - Scheduler started successfully
+2025-05-19 03:17:06,706 - digital_wallet - INFO - Application startup completed successfully
+2025-05-19 03:17:06,706 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2025-05-19 03:17:08,475 - apscheduler.scheduler - INFO - Scheduler has been shut down
