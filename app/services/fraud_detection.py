@@ -12,66 +12,76 @@ class FraudDetectionService:
     def __init__(self, db: Session):
         self.db = db
 
-    def check_transaction(self, transaction: Transaction) -> bool:
-        """
-        Check if a transaction is suspicious based on various rules
-        """
-        # Get user's recent transactions
-        recent_transactions = self.db.query(Transaction).filter(
-            (Transaction.sender_id == transaction.sender_id) |
-            (Transaction.receiver_id == transaction.sender_id),
-            Transaction.created_at >= datetime.utcnow() - timedelta(hours=24)
-        ).all()
+    def check_transaction(self, transaction: Transaction) -> tuple[bool, str]:
+        """Check if a transaction is suspicious"""
+        try:
+            # Check for multiple transfers in short period
+            if transaction.type == TransactionType.TRANSFER:
+                recent_transfers = self.db.query(Transaction).filter(
+                    Transaction.sender_id == transaction.sender_id,
+                    Transaction.type == TransactionType.TRANSFER,
+                    Transaction.created_at >= datetime.utcnow() - timedelta(minutes=5)
+                ).count()
+                
+                if recent_transfers >= 3:
+                    return True, "Multiple transfers in short period"
 
-        # Check for high frequency of transactions
-        if len(recent_transactions) > 10:
-            return True
+            # Check for large withdrawal
+            if transaction.type == TransactionType.WITHDRAWAL:
+                if transaction.amount > 1000:  # Threshold for large withdrawal
+                    return True, "Large withdrawal amount"
 
-        # Check for large transaction amount
-        currency = transaction.currency.value
-        if currency == CurrencyType.USD.value:
-            if transaction.amount > 10000:  # $10,000 threshold for USD
-                return True
-        elif currency == CurrencyType.EUR.value:
-            if transaction.amount > 8500:  # €8,500 threshold for EUR
-                return True
-        elif currency == CurrencyType.GBP.value:
-            if transaction.amount > 7500:  # £7,500 threshold for GBP
-                return True
-        elif currency == CurrencyType.BONUS.value:
-            if transaction.amount > 1000:  # 1,000 bonus points threshold
-                return True
+            # Check for sudden large transfer
+            if transaction.type == TransactionType.TRANSFER:
+                if transaction.amount > 500:  # Threshold for large transfer
+                    return True, "Large transfer amount"
 
-        # Check for multiple transfers to the same recipient
-        if transaction.transaction_type == TransactionType.TRANSFER:
-            transfers_to_recipient = sum(
-                1 for t in recent_transactions
-                if t.transaction_type == TransactionType.TRANSFER
-                and t.receiver_id == transaction.receiver_id
-            )
-            if transfers_to_recipient > 3:
-                return True
+            # Check for rapid balance changes
+            recent_transactions = self.db.query(Transaction).filter(
+                (Transaction.sender_id == transaction.sender_id) |
+                (Transaction.receiver_id == transaction.sender_id),
+                Transaction.created_at >= datetime.utcnow() - timedelta(hours=1)
+            ).all()
 
-        return False
+            total_volume = sum(t.amount for t in recent_transactions)
+            if total_volume > 2000:  # Threshold for rapid balance changes
+                return True, "Rapid balance changes detected"
 
-    def scan_recent_transactions(self):
-        """
-        Scan recent transactions for suspicious activity
-        """
-        # Get transactions from the last 24 hours
-        recent_transactions = self.db.query(Transaction).filter(
-            Transaction.created_at >= datetime.utcnow() - timedelta(hours=24),
-            Transaction.is_flagged == False
-        ).all()
+            return False, ""
 
-        for transaction in recent_transactions:
-            if self.check_transaction(transaction):
-                transaction.is_flagged = True
-                transaction.flag_reason = "Suspicious transaction pattern detected"
-                transaction.status = TransactionStatus.FLAGGED
-                self.db.add(transaction)
+        except Exception as e:
+            logger.error(f"Error in fraud detection: {str(e)}")
+            return False, ""
 
-        self.db.commit()
+    def scan_recent_transactions(self) -> list[dict]:
+        """Scan recent transactions for fraud patterns"""
+        try:
+            suspicious_transactions = []
+            recent_transactions = self.db.query(Transaction).filter(
+                Transaction.created_at >= datetime.utcnow() - timedelta(hours=24)
+            ).all()
+
+            for transaction in recent_transactions:
+                is_suspicious, reason = self.check_transaction(transaction)
+                if is_suspicious:
+                    suspicious_transactions.append({
+                        "transaction_id": transaction.id,
+                        "user_id": transaction.sender_id,
+                        "amount": transaction.amount,
+                        "type": transaction.type,
+                        "reason": reason,
+                        "created_at": transaction.created_at
+                    })
+                    # Update transaction status
+                    transaction.is_flagged = True
+                    transaction.flag_reason = reason
+                    self.db.commit()
+
+            return suspicious_transactions
+
+        except Exception as e:
+            logger.error(f"Error scanning transactions: {str(e)}")
+            return []
 
     def get_fraud_stats(self) -> dict:
         """

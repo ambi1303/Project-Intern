@@ -109,11 +109,33 @@ class TransactionInDB(TransactionBase):
 class AdminStats(BaseModel):
     total_users: int
     total_transactions: int
-    total_volume: Dict[str, float]  # Volume per currency
+    total_volume: float
     flagged_transactions: int
+    active_wallets: int
 
 class TopUser(BaseModel):
-    id: int
+    user_id: int
     email: str
-    balances: Dict[str, float]  # Balances per currency
-    transaction_count: int 
+    total_balance: float
+    transaction_count: int
+
+class FlaggedTransaction(BaseModel):
+    id: int
+    sender_id: int
+    receiver_id: int
+    amount: float
+    currency: str
+    type: str
+    status: str
+    flag_reason: Optional[str]
+    created_at: datetime
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+class UserBalance(BaseModel):
+    user_id: int
+    email: str
+    balances: Dict[str, float] 
